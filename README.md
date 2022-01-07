@@ -4,25 +4,20 @@ A Customized YouTube App which blocks ads.
 
 ## Summary
 
-With the initial commit, the app basically works, but there are some runtime bugs and some error with the project.
+With the initial commit, the app basically works on Pixel 4 emulator and my Pixel 3a device, 
+but there are some runtime bugs and some error with the project.
 
-__Bugs that impact the performance__
+The iOS app is not tested yet.
 
-- A JavaScript variable `idDefined` is being declared every time when WebView is refreshed
-- The condition for skipping ads should be updated to prevent it being executed multiple times.
-- When a promotion div is being removed, the view can flash hardly. Make it softer.
-
-__Updates required for the project__
-
-- Errors in build.gradle which does not affect the runtime, but annoying, and better to be solved.
-- The local properties for android build is better to be created.
+Please check about the issues for specific problem, 
+and please do not hesitate to give any suggestions or improvement to this app.
 
 ## LICENSE
 
 ```
 MIT License
 
-Copyright (c) 2022 Vincent Shen
+Copyright (c) 2022, hanabinoir
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
