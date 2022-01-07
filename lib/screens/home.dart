@@ -12,18 +12,30 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  late WebViewController _controller;
-  String? currentUrl;
   late bool _isWatching;
+  late WebViewController _controller;
+
+  String? _currentUrl;
+  bool _isAdBlocked = false;
+
+  Future<void> _prepare() async {
+    await _runJS('prepare');
+  }
 
   Future<void> _blockAds() async {
-    String js = await rootBundle.loadString('assets/adblocker.js');
+    if (_isAdBlocked) { return; }
+    await _runJS('adblocker');
+    _isAdBlocked = true;
+  }
+
+  Future<void> _runJS(filename) async {
+    String js = await rootBundle.loadString('assets/$filename.js');
     String res = await _controller.runJavascriptReturningResult(js);
     if (res == 'null') { return; }
     log('Result: $res');
   }
 
-  bool _setWatchStatus() => currentUrl != null && currentUrl!.contains('watch');
+  bool _setWatchStatus() => _currentUrl != null && _currentUrl!.contains('watch');
 
   @override
   void initState() {
@@ -42,21 +54,27 @@ class _HomeState extends State<Home> {
       body: SafeArea(
         child: WebView(
           initialUrl: _homeUrl,
-          onWebViewCreated: (controller) {
+          onWebViewCreated: (controller) async {
             setState(() {
               _controller = controller;
             });
+            await _prepare();
           },
           onProgress: (progress) {
             log('Progress: $progress%');
           },
-          onPageFinished: (url) {
+          onPageFinished: (url) async {
             log('URL: url');
+            bool isWatching = _setWatchStatus();
+            if (!isWatching) {
+              await _prepare();
+            }
             setState(() {
-              _blockAds();
-              _isWatching = _setWatchStatus();
+              _currentUrl = url;
+              _isWatching = isWatching;
               log('Watching a video: $_isWatching');
             });
+            _blockAds();
           },
           onWebResourceError: (error) {
             log('Error: ${error.description}');
